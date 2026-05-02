@@ -1,0 +1,8 @@
+Aufgabe 1
+- HTTP
+- Paket Bytes
+- Regulärer Ausdruck [a-z0-9]{8}
+-> https://www.lanwan.ninja/ra6rgv7h/
+-ICMP
+-> https://www.lanwan.ninja/nd7hark3/
+-> Q29uZ3JhdHNfVGhpc19Jc190aGVfQm9udXMh

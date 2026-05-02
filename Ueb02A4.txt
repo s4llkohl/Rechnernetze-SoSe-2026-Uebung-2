@@ -1,0 +1,3 @@
+Aufgabe 4
+
+Man kann statt einer Referenz auf den nächsten Knoten auch eine zu dem Vorgänger machen, wodurch es sozusagen zwei gegenläufige TokenRings gibt. Fällt ein Knoten aus, bleibt also immer noch ein funktionierender Kreis bestehen.
