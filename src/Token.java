@@ -13,7 +13,43 @@ public class Token {
 
     private static final int max_buffer_size = 4096;
 
+    public enum MessageType {
+        TOKEN,
+        ACK
+    }
+
     public record Endpoint(String ip, int port) {}
+
+    /**
+     * Enthält zusätzlich zum gelesenen Token den Absender des UDP-Pakets.
+     * Das wird benötigt, damit ein empfangener Token bestätigt werden kann.
+     */
+    public record ReceivedToken(Token token, Endpoint sender) {}
+
+    private MessageType type = MessageType.TOKEN;
+
+    public MessageType getType() {
+        return type;
+    }
+
+    public void setType(MessageType type) {
+        this.type = type;
+    }
+
+    public boolean isAck() {
+        return type == MessageType.ACK;
+    }
+
+    public boolean isToken() {
+        return type == MessageType.TOKEN;
+    }
+
+    public static Token ackFor(int sequence) {
+        Token ack = new Token();
+        ack.setType(MessageType.ACK);
+        ack.setSequence(sequence);
+        return ack;
+    }
 
     public Token append(String ip, int port) {
         ring.offer(new Endpoint(ip, port));
@@ -33,9 +69,11 @@ public class Token {
         return ring.poll();
     }
 
-    public boolean removeEndpoint(Endpoint endpoint) {return ring.remove(endpoint); } //Nutzung einer LinkedList-Methode
+    public boolean removeEndpoint(Endpoint endpoint) {
+        return ring.remove(endpoint);
+    }
 
-    public int length () {
+    public int length() {
         return ring.size();
     }
 
@@ -53,7 +91,7 @@ public class Token {
         sequence++;
     }
 
-    public void send (DatagramSocket s, String ip_address, int port ) throws IOException {
+    public void send(DatagramSocket s, String ip_address, int port) throws IOException {
         String rc_json = toJSON();
         byte[] rc_json_bytes = rc_json.getBytes(StandardCharsets.UTF_8);
         InetAddress address = InetAddress.getByName(ip_address);
@@ -62,17 +100,27 @@ public class Token {
         s.send(packet);
     }
 
-    public void send (DatagramSocket s, Endpoint endpoint) throws IOException {
+    public void send(DatagramSocket s, Endpoint endpoint) throws IOException {
         send(s, endpoint.ip(), endpoint.port());
     }
 
     public static Token receive(DatagramSocket s) throws IOException {
+        return receiveMessage(s).token();
+    }
+
+    public static ReceivedToken receiveMessage(DatagramSocket s) throws IOException {
         byte[] buf = new byte[max_buffer_size];
         DatagramPacket packet = new DatagramPacket(buf, buf.length);
         s.receive(packet);
-        String rc_json = new String(packet.getData(),0,packet.getLength(), StandardCharsets.UTF_8);
+        String rc_json = new String(packet.getData(), 0, packet.getLength(), StandardCharsets.UTF_8);
         System.out.printf("Received %s from %s:%d\n", rc_json, packet.getAddress().getHostAddress(), packet.getPort());
-        return fromJSON(rc_json);
+        Token token = fromJSON(rc_json);
+        Endpoint sender = new Endpoint(packet.getAddress().getHostAddress(), packet.getPort());
+        return new ReceivedToken(token, sender);
+    }
+
+    public static void sendAck(DatagramSocket socket, Endpoint receiver, int sequence) throws IOException {
+        ackFor(sequence).send(socket, receiver);
     }
 
     @JsonProperty
