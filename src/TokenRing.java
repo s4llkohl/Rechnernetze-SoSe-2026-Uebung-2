@@ -29,8 +29,18 @@ public class TokenRing {
                     rc.append(candidate);
                 }
                 candidates.clear();
-                Token.Endpoint next = rc.poll();
-                rc.append(next);
+                Token.Endpoint next;
+
+                if (rc.getDirection() == Token.Direction.CLOCKWISE) {
+                    next = rc.poll();
+                } else {
+                    next = ((LinkedList<Token.Endpoint>) rc.getRing()).removeLast();
+                }
+                if (rc.getDirection() == Token.Direction.CLOCKWISE) {
+                    rc.append(next);
+                } else {
+                    ((LinkedList<Token.Endpoint>) rc.getRing()).addFirst(next);
+                }
                 rc.incrementSequence();
                 Thread.sleep(1000);
                 rc.send(socket, next);
@@ -52,6 +62,9 @@ public class TokenRing {
                 if (!sent) {
                     System.out.printf("Token %s:%d removed!\n", next.ip(), next.port());
                     rc.removeEndpoint(next);
+
+                    // Richtung wechseln!
+                    rc.reverseDirection();
 
                     if (rc.length() == 0) {
                         System.out.println("No more Tokens found.");
