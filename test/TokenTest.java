@@ -8,13 +8,39 @@ class TokenTest {
 
     @Test
     void testMessage() throws IOException {
-        Token m = new Token().append("ip0", 0).append("ip1", 1);
-        String json_1 = m.toJSON();
-        Token.Endpoint ipr = m.poll();
-        m.append(ipr.ip(), ipr.port());
-        ipr = m.poll();
-        m.append(ipr.ip(), ipr.port());
-        String json_2 = m.toJSON();
-        assertEquals(json_1, json_2);
+        Token token = new Token()
+                .append("ip0", 0)
+                .append("ip1", 1)
+                .append("ip2", 2);
+        token.setDirection(Token.Direction.COUNTERCLOCKWISE);
+        for (int i = 0; i < 7; i++) {
+            token.incrementSequence();
+        }
+
+        String json = token.toJSON();
+        Token decoded = Token.fromJSON(json);
+
+        assertEquals(json, decoded.toJSON());
+        assertEquals(Token.Direction.COUNTERCLOCKWISE, decoded.getDirection());
+        assertEquals(7, decoded.getSequence());
+    }
+
+    @Test
+    void testFailoverUsesOppositeDirection() {
+        Token.Endpoint a = new Token.Endpoint("ip0", 0);
+        Token.Endpoint b = new Token.Endpoint("ip1", 1);
+        Token.Endpoint c = new Token.Endpoint("ip2", 2);
+        Token.Endpoint d = new Token.Endpoint("ip3", 3);
+
+        Token token = new Token()
+                .append(a)
+                .append(b)
+                .append(c)
+                .append(d);
+
+        assertEquals(b, token.nextEndpoint(a));
+        token.removeEndpoint(b);
+        token.flipDirection();
+        assertEquals(d, token.nextEndpoint(a));
     }
 }
