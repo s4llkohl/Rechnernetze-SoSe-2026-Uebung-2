@@ -1,0 +1,5 @@
+Aufgabe 3
+
+Der TCP-Scan ist schneller, als der UDP-Scan, vermutlich weil Nmap bei fehlenden Antworten erstmal warten muss. Bei dem Reliable Stream von TCP kann es nicht zu solchen Fehlern kommen. Man sieht das bei dem TCP-Scan, durch das Senden von SYN-Paketen auf die ein offener Port dann mit SYN/ACK antwortet, wodurch Nmap deutlich schneller eine Antwort erhält.
+
+Nmap bietet die Möglichkeit durch Timing Templates zu beschleunigen: T<0-5>: Set timing template (higher is faster)

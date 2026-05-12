@@ -1,0 +1,9 @@
+Aufgabe 2
+ a) Tracert 8.8.8.8 läuft über 7 Hops bis es beim Ziel ankommt (einer pro Zeile). In jeder Zeile wird die Latenz dreimal getestet. Es läuft erst über die Fritzbox im Haus, über Router des Anbieters und dann zu Router von Google.
+
+Dabei wird erst ein Paket mit TTL = 1 von meinem PC geschickt. Die Fritzbox erhält dieses Paket und subtrahiert wieder 1, sprich TTL = 0. Dadurch wird eine Fehlermeldung zurückgeschickt, wodurch die Adresse der Fritzbox bekannt wird.
+Als nächstes wird ein Paket mit TTL = 2 geschickt, welches von der Fritzbox an einen zweiten Router geschickt wird, welcher wiederum mit einem Fehler antwortet, wodurch man dessen Adresse erfährt. So geht es weiter bis das Ziel erreicht ist.
+
+b) Während die Latenz in Zeile 5 noch bei 10-12ms liegt (Frankfurt), springt sie in Zeile 6 auf einmal auf über 200ms, woraus wir schließen können, dass das Paket hier den europäischen Kontinent verlässt. Es kommt zu einem erneuten Sprung bis zu 382ms in Zeile 17, bei der Überseeverbindung von den USA nach Australien. Teilweise kommt es zu Zeitüberschreitungen.
+
+c) Die Route verläuft von Deutschland (Frankfurt) über Großbritannien (London) und die Schweiz (Genf) nach Frankreich (Paris). Die IP-Adresse 195.220.128.193 gehört zu Renater, einem französischen Forschungsnetzwerk.
