@@ -48,3 +48,9 @@ der TCP Scan ist deutlich schneller, weil TCP durch den Three-Way-Handshake imme
 Three-Way-Handshake nicht vollständig durchführen, sondern kann ihn verfrüht abbrechen, weil man ja nur herausfinden will ob der Port offen ist und nicht eine Verbindung aufbauen will. 
 UDP-Scans sind sehr langsam, weil UDP im Gegensatz zu TCP nicht automatisch antwortet. Wenn Nmap bei einem UDP-Scan keine Antwort bekommt, weiß es nicht sicher, ob der Port offen ist, 
 gefiltert wird oder das Paket verloren gegangen ist. Deshalb muss Nmap warten, bis ein Timeout abläuft, und versucht es teilweise erneut. Dadurch dauert der UDP-Scan deutlich länger als der TCP-Scan.
+
+Aufgabe 4
+Damit der Token Ring auch beim Ausfall eines Knotens weiter funktioniert, wird beim Weitergeben des Tokens geprüft, ob der nächste Knoten erreichbar ist. Dazu wird das Token nicht nur einmal gesendet, 
+sondern bei einem Fehler mehrfach erneut übertragen. Wenn alle Sendeversuche fehlschlagen, wird der betroffene Knoten mit removeEndpoint aus dem Ring entfernt.
+Anschließend wird das Token an den nächsten verbleibenden Knoten im Ring weitergegeben. Dadurch bleibt der Ring funktionsfähig, solange noch mindestens ein erreichbarer Knoten vorhanden ist. 
+Zusätzlich wurde eine Funktion zum Entfernen von Knoten ergänzt, damit ausgefallene Teilnehmer dynamisch aus der Ringstruktur gelöscht werden können.
