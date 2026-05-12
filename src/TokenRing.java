@@ -5,15 +5,58 @@ import java.util.LinkedList;
 
 public class TokenRing {
 
+    private static final int MAX_RETRIES = 3;
+    private static final long PROCESSING_DELAY_MS = 1000;
+
+    private static void pause(long millis) throws InterruptedException {
+        Thread.sleep(millis);
+    }
+
+    private static boolean sendWithRetries(DatagramSocket socket, Token token, Token.Endpoint next)
+            throws InterruptedException {
+        for (int i = 0; i < MAX_RETRIES; i++) {
+            try {
+                token.send(socket, next);
+                return true;
+            } catch (IOException e) {
+                System.out.printf("Failed to sent to %s:%d – Take: %d/%d\n",
+                        next.ip(), next.port(), i + 1, MAX_RETRIES);
+                Thread.sleep(500);
+            }
+        }
+        return false;
+    }
+
+    private static boolean forwardToken(DatagramSocket socket, Token token, Token.Endpoint self)
+            throws InterruptedException {
+        int failures = 0;
+        while (token.length() > 1 && failures < token.length()) {
+            Token.Endpoint next = token.nextEndpoint(self);
+            if (next == null) {
+                return false;
+            }
+            if (sendWithRetries(socket, token, next)) {
+                return true;
+            }
+
+            System.out.printf("Token %s:%d removed!\n", next.ip(), next.port());
+            token.removeEndpoint(next);
+            token.flipDirection();
+            failures++;
+        }
+        return false;
+    }
+
     private static void loop(DatagramSocket socket, String ip, int port, boolean first){
         LinkedList<Token.Endpoint> candidates = new LinkedList<>();
+        Token.Endpoint self = new Token.Endpoint(ip, port);
         if (first) {
-            candidates.add(new Token.Endpoint(ip, port));
+            candidates.add(self);
         }
         while (true) {
             try {
                 Token rc = Token.receive(socket);
-                System.out.printf("Token: seq=%d, #members=%d", rc.getSequence(), rc.length());
+                System.out.printf("Token: seq=%d, #members=%d, direction=%s", rc.getSequence(), rc.length(), rc.getDirection());
                 for (Token.Endpoint endpoint : rc.getRing()) {
                     System.out.printf(" (%s, %d)", endpoint.ip(), endpoint.port());
                 }
@@ -29,35 +72,19 @@ public class TokenRing {
                     rc.append(candidate);
                 }
                 candidates.clear();
-                Token.Endpoint next = rc.poll();
-                rc.append(next);
-                rc.incrementSequence();
-                Thread.sleep(1000);
-                rc.send(socket, next);
-
-                boolean sent = false;
-                int maxRetries = 3;
-                for (int i = 0; i < maxRetries && !sent; i++) {
-                    try {
-                        rc.send(socket, next);
-                        sent = true;
-                    } catch (IOException e) {
-                        System.out.printf("Failed to sent to %s:%d – Take: %d/%d\n",
-                                next.ip(), next.port(), i + 1, maxRetries);
-                        Thread.sleep(500);
-                    }
+                if (rc.indexOf(self) < 0) {
+                    rc.append(self);
                 }
-                //Hier wird eine maximale Anzahl von Versuchen definiert, um einen bestimmten Knoten zu erreichen.
-                //Wenn es scheitert, soll der entsprechende Endpoint aus der Queue im nächsten Schritt gelöscht werde
-                if (!sent) {
-                    System.out.printf("Token %s:%d removed!\n", next.ip(), next.port());
-                    rc.removeEndpoint(next);
+                rc.incrementSequence();
+                pause(PROCESSING_DELAY_MS);
+                boolean sent = forwardToken(socket, rc, self);
 
+                if (!sent) {
                     if (rc.length() == 0) {
                         System.out.println("No more Tokens found.");
                         break;
                     }
-                    continue;
+                    System.out.println("Unable to reach any neighbor in either direction.");
                 }
 
             }
@@ -97,7 +124,7 @@ public class TokenRing {
         }
         catch (IOException e) {
             System.out.println("IO error: " + e.getMessage());
-            System.out.println(e.getStackTrace());
+            e.printStackTrace();
         }
     }
 }

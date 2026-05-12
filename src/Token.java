@@ -13,6 +13,15 @@ public class Token {
 
     private static final int max_buffer_size = 4096;
 
+    public enum Direction {
+        CLOCKWISE,
+        COUNTERCLOCKWISE;
+
+        public Direction opposite() {
+            return this == CLOCKWISE ? COUNTERCLOCKWISE : CLOCKWISE;
+        }
+    }
+
     public record Endpoint(String ip, int port) {}
 
     public Token append(String ip, int port) {
@@ -33,7 +42,33 @@ public class Token {
         return ring.poll();
     }
 
-    public boolean removeEndpoint(Endpoint endpoint) {return ring.remove(endpoint); } //Nutzung einer LinkedList-Methode
+    public void removeEndpoint(Endpoint endpoint) { ring.remove(endpoint); } //Nutzung einer LinkedList-Methode
+
+    public int indexOf(Endpoint endpoint) {
+        return ring.indexOf(endpoint);
+    }
+
+    public Endpoint get(int index) {
+        return ring.get(index);
+    }
+
+    public Endpoint neighbor(Endpoint endpoint, Direction direction) {
+        int index = indexOf(endpoint);
+        if (index < 0 || ring.size() < 2) {
+            return null;
+        }
+        int offset = direction == Direction.CLOCKWISE ? 1 : -1;
+        int neighborIndex = Math.floorMod(index + offset, ring.size());
+        return ring.get(neighborIndex);
+    }
+
+    public Endpoint nextEndpoint(Endpoint endpoint) {
+        return neighbor(endpoint, direction);
+    }
+
+    public Endpoint previousEndpoint(Endpoint endpoint) {
+        return neighbor(endpoint, direction.opposite());
+    }
 
     public int length () {
         return ring.size();
@@ -41,16 +76,27 @@ public class Token {
 
     private int sequence = 0;
 
+    @JsonProperty
+    private Direction direction = Direction.CLOCKWISE;
+
     public int getSequence() {
         return sequence;
     }
 
-    public void setSequence(int sequence) {
-        this.sequence = sequence;
-    }
-
     public void incrementSequence() {
         sequence++;
+    }
+
+    public Direction getDirection() {
+        return direction;
+    }
+
+    public void setDirection(Direction direction) {
+        this.direction = direction;
+    }
+
+    public void flipDirection() {
+        direction = direction.opposite();
     }
 
     public void send (DatagramSocket s, String ip_address, int port ) throws IOException {
@@ -76,7 +122,7 @@ public class Token {
     }
 
     @JsonProperty
-    private final Queue<Endpoint> ring = new LinkedList<>();
+    private final LinkedList<Endpoint> ring = new LinkedList<>();
 
     public Queue<Endpoint> getRing() {
         return ring;
