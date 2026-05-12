@@ -91,4 +91,22 @@ public class Token {
     public static Token fromJSON(String json) throws IOException {
         return serializer.readValue(json, Token.class);
     }
+
+    public enum Direction {
+        CLOCKWISE,
+        COUNTERCLOCKWISE
+    }
+
+    @JsonProperty
+    private Direction direction = Direction.CLOCKWISE;
+
+    public Direction getDirection() {
+        return direction;
+    }
+
+    public void reverseDirection() {
+        direction = (direction == Direction.CLOCKWISE)
+                ? Direction.COUNTERCLOCKWISE
+                : Direction.CLOCKWISE;
+    }
 }
