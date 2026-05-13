@@ -7,7 +7,8 @@ vermutlich antwortet der Offene UDP port einfach nicht
 Grund dafür ist dass UDP einfach anders funktioniert als TCP, die nmap wartet wahrscheinlich
 auf irgendeine Rückmeldung vom UDP der nie kommt und deswegen passiert auch nichts.
 
-Schneller wäre der Scan wenn man vermutlich nur bestimmte ports ansteuert, oder parallele Hostscans macht (sagt Chatty),
+Schneller wäre der Scan wenn man vermutlich nur bestimmte ports ansteuert, 
+oder parallele Hostscans macht (sagt Chatty),
  was im prinzip einfach nur beudeutet dass wir nicht nur einen Port ansteuern 
  und dann warten sondern mehrere gleichzeitig.
 
