@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 
 
@@ -12,7 +13,26 @@ public class TokenRing {
         }
         while (true) {
             try {
-                Token rc = Token.receive(socket);
+                byte[] buf = new byte[4096];
+
+                DatagramPacket packet =
+                        new DatagramPacket(buf, buf.length);
+
+                socket.receive(packet);
+
+                String json = new String(
+                        packet.getData(),
+                        0,
+                        packet.getLength(),
+                        StandardCharsets.UTF_8);
+
+                Token rc = Token.fromJSON(json);
+
+                sendAck(
+                        socket,
+                        packet.getAddress(),
+                        packet.getPort());
+
                 System.out.printf("Token: seq=%d, #members=%d", rc.getSequence(), rc.length());
                 for (Token.Endpoint endpoint : rc.getRing()) {
                     System.out.printf(" (%s, %d)", endpoint.ip(), endpoint.port());
@@ -40,26 +60,28 @@ public class TokenRing {
                 for (int i = 0; i < maxRetries && !sent; i++) {
                     try {
                         rc.send(socket, next);
-                        sent = true;
-                    } catch (IOException e) {
-                        System.out.printf("Failed to sent to %s:%d – Take: %d/%d\n",
-                                next.ip(), next.port(), i + 1, maxRetries);
-                        Thread.sleep(500);
+
+                        if (waitForAck(socket)) {
+                            sent = true;
+                        } else {
+                            System.out.printf("No ACK from %s:%d (%d/%d)\n", next.ip(), next.port(), i + 1, maxRetries);
+                        }
+                    }
+                    catch (IOException e) {
+                        System.out.println("Send failed");
                     }
                 }
                 //Hier wird eine maximale Anzahl von Versuchen definiert, um einen bestimmten Knoten zu erreichen.
                 //Wenn es scheitert, soll der entsprechende Endpoint aus der Queue im nächsten Schritt gelöscht werde
                 if (!sent) {
-                    System.out.printf("Token %s:%d removed!\n", next.ip(), next.port());
+
+                    System.out.printf(
+                            "Removing %s:%d\n",
+                            next.ip(),
+                            next.port());
+
                     rc.removeEndpoint(next);
-
-                    if (rc.length() == 0) {
-                        System.out.println("No more Tokens found.");
-                        break;
-                    }
-                    continue;
                 }
-
             }
             catch (IOException e) {
                 System.out.println("Error receiving packet: " + e.getMessage());
@@ -70,8 +92,50 @@ public class TokenRing {
         }
     }
 
+    private static void sendAck(
+            DatagramSocket socket,
+            InetAddress address,
+            int port) throws IOException {
+
+        byte[] ackData = "ACK".getBytes();
+
+        DatagramPacket ackPacket =
+                new DatagramPacket(
+                        ackData,
+                        ackData.length,
+                        address,
+                        port);
+
+        socket.send(ackPacket);
+    }
+
+    private static boolean waitForAck(DatagramSocket socket) {
+        try {
+            byte[] buf = new byte[16];
+
+            DatagramPacket packet =
+                    new DatagramPacket(buf, buf.length);
+
+           socket.receive(packet);
+
+           String msg = new String(
+                   packet.getData(),
+                   0,
+                    packet.getLength());
+
+            return msg.equals("ACK");
+        }
+        catch (SocketTimeoutException e) {
+            return false;
+        }
+        catch (IOException e) {
+            return false;
+        }
+    }
+
     public static void main(String[] args) {
         try (DatagramSocket socket = new DatagramSocket()) {
+            socket.setSoTimeout(2000);
             socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
             String ip = socket.getLocalAddress().getHostAddress();
             socket.disconnect();
