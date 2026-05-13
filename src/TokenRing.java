@@ -2,14 +2,23 @@ import java.io.IOException;
 import java.net.*;
 import java.util.LinkedList;
 
-
 public class TokenRing {
 
-    private static void loop(DatagramSocket socket, String ip, int port, boolean first){
+    private static final int RECEIVE_TIMEOUT_MS = 5000;
+    private static final int MAX_RETRIES = 3;
+
+    private static void loop(DatagramSocket socket, String ip, int port, boolean first) {
         LinkedList<Token.Endpoint> candidates = new LinkedList<>();
         if (first) {
             candidates.add(new Token.Endpoint(ip, port));
         }
+
+        try {
+            socket.setSoTimeout(RECEIVE_TIMEOUT_MS);
+        } catch (SocketException e) {
+            System.out.println("Konnte Timeout nicht setzen: " + e.getMessage());
+        }
+
         while (true) {
             try {
                 Token rc = Token.receive(socket);
@@ -18,54 +27,76 @@ public class TokenRing {
                     System.out.printf(" (%s, %d)", endpoint.ip(), endpoint.port());
                 }
                 System.out.println();
+
                 if (rc.length() == 1) {
                     candidates.add(rc.poll());
                     if (!first) {
                         continue;
                     }
                 }
+
                 first = false;
+
                 for (Token.Endpoint candidate : candidates) {
                     rc.append(candidate);
                 }
                 candidates.clear();
+
                 Token.Endpoint next = rc.poll();
                 rc.append(next);
                 rc.incrementSequence();
+
                 Thread.sleep(1000);
-                rc.send(socket, next);
 
                 boolean sent = false;
-                int maxRetries = 3;
-                for (int i = 0; i < maxRetries && !sent; i++) {
+                for (int i = 0; i < MAX_RETRIES && !sent; i++) {
                     try {
                         rc.send(socket, next);
                         sent = true;
                     } catch (IOException e) {
-                        System.out.printf("Failed to sent to %s:%d – Take: %d/%d\n",
-                                next.ip(), next.port(), i + 1, maxRetries);
+                        System.out.printf("Senden an %s:%d fehlgeschlagen – Versuch %d/%d\n",
+                                next.ip(), next.port(), i + 1, MAX_RETRIES);
                         Thread.sleep(500);
                     }
                 }
-                //Hier wird eine maximale Anzahl von Versuchen definiert, um einen bestimmten Knoten zu erreichen.
-                //Wenn es scheitert, soll der entsprechende Endpoint aus der Queue im nächsten Schritt gelöscht werde
+
                 if (!sent) {
-                    System.out.printf("Token %s:%d removed!\n", next.ip(), next.port());
+                    System.out.printf("Knoten %s:%d wird aus dem Ring entfernt!\n", next.ip(), next.port());
                     rc.removeEndpoint(next);
 
                     if (rc.length() == 0) {
-                        System.out.println("No more Tokens found.");
+                        System.out.println("Keine weiteren Knoten im Ring. Beende.");
                         break;
+                    }
+
+                    Token.Endpoint fallback = rc.poll();
+                    rc.append(fallback);
+                    boolean fallbackSent = false;
+                    for (int i = 0; i < MAX_RETRIES && !fallbackSent; i++) {
+                        try {
+                            rc.send(socket, fallback);
+                            fallbackSent = true;
+                        } catch (IOException e) {
+                            System.out.printf("Fallback an %s:%d fehlgeschlagen – Versuch %d/%d\n",
+                                    fallback.ip(), fallback.port(), i + 1, MAX_RETRIES);
+                            Thread.sleep(500);
+                        }
+                    }
+                    if (!fallbackSent) {
+                        System.out.printf("Auch Fallback-Knoten %s:%d nicht erreichbar.\n",
+                                fallback.ip(), fallback.port());
+                        rc.removeEndpoint(fallback);
                     }
                     continue;
                 }
 
-            }
-            catch (IOException e) {
-                System.out.println("Error receiving packet: " + e.getMessage());
-            }
-            catch (Exception e) {
-                System.out.println("Error: " + e.getMessage());
+            } catch (SocketTimeoutException e) {
+                System.out.println("Timeout: Kein Token empfangen. Möglicherweise Token verloren.");
+
+            } catch (IOException e) {
+                System.out.println("Fehler beim Empfangen: " + e.getMessage());
+            } catch (Exception e) {
+                System.out.println("Fehler: " + e.getMessage());
             }
         }
     }
@@ -76,28 +107,23 @@ public class TokenRing {
             String ip = socket.getLocalAddress().getHostAddress();
             socket.disconnect();
             int port = socket.getLocalPort();
-            System.out.printf("UDP endpoint is (%s, %d)\n", ip, port);
+            System.out.printf("UDP-Endpunkt: (%s, %d)\n", ip, port);
+
             if (args.length == 0) {
-                loop(socket,ip,port,true);
+                loop(socket, ip, port, true);
+            } else if (args.length == 2) {
+                Token rc = new Token().append(ip, port);
+                rc.send(socket, args[0], Integer.parseInt(args[1]));
+                loop(socket, ip, port, false);
+            } else {
+                System.out.println("Verwendung: \"java TokenRing\" oder \"java TokenRing <ip> <port>\"");
             }
-            else if (args.length == 2) {
-                Token rc = new Token().append(ip,port);
-                rc.send(socket,args[0],Integer.parseInt(args[1]));
-                loop(socket,ip,port,false);
-            }
-            else {
-                System.out.println("Usage: \"java TokenRing\" or \"java TokenRing <ip> <port>\"");
-            }
-        }
-        catch (SocketException e) {
-            System.out.println("Error creating socket: " + e.getMessage());
-        }
-        catch (UnknownHostException e) {
-            System.out.println("Error while determining IP address: " + e.getMessage());
-        }
-        catch (IOException e) {
-            System.out.println("IO error: " + e.getMessage());
-            System.out.println(e.getStackTrace());
+        } catch (SocketException e) {
+            System.out.println("Fehler beim Erstellen des Sockets: " + e.getMessage());
+        } catch (UnknownHostException e) {
+            System.out.println("Fehler bei IP-Ermittlung: " + e.getMessage());
+        } catch (IOException e) {
+            System.out.println("IO-Fehler: " + e.getMessage());
         }
     }
 }

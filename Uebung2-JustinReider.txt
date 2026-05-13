@@ -1,0 +1,25 @@
+Aufgabe 1
+frame matches "[a-z0-9]{8}"
+https://www.lanwan.ninja/dzh20szq/
+Aufgabe 2
+a)
+Ich habe keine Textdatei gefunden daher verwende ich die Ausgabe von der Aufgabe b) für die Erklärung von Traceroute.
+Traceroute sendet Pakete mit schrittweise erhöhter TTL (Time-To-Live), beginnend bei 1. Jeder Router, den das Paket passiert, verringert die TTL um 1 – erreicht sie 0, schickt der Router eine Fehlermeldung zurück. So erfährt Traceroute, welche Station sich an welchem Hop befindet.
+In der Ausgabe sieht man z.B. Hop 1 (172.28.176.1) als lokalen Router mit ~0,3 ms, Hop 2 (10.2.0.1) als Provider-Gateway mit ~35 ms. Die drei Zeitwerte pro Zeile sind drei separate Messungen, um Schwankungen sichtbar zu machen.
+Hops mit * * * (z.B. Hop 3 oder 11–16) bedeuten, dass der jeweilige Router nicht auf ICMP-Pakete antwortet – er ist also vorhanden, aber unsichtbar für Traceroute. Die Route bricht dadurch nicht ab.
+Am Ende bei Hop 24 erscheint !H (Host Unreachable), was bedeutet dass der Zielserver die Traceroute-Pakete aktiv blockiert, obwohl er grundsätzlich erreichbar ist.
+b)
+Der Traceroute zur ANU (130.56.67.33) zeigt mehrere interessante Beobachtungen:
+Route geografisch: Der Weg geht von deinem Rechner über London (lon2.uk) → Amsterdam (ams2.nl) → Seattle, USA (sea1.us) → Sydney, Australien (brwy.nsw.aarnet.net.au) → Canberra (actn.act.aarnet.net.au) → ANU-Campus. Das sind 4 Kontinentalabschnitte.
+Latenzen: Die RTT steigt mit der Distanz stark an – von ~35 ms in Europa auf ~300 ms ab Australien. Das ist physikalisch bedingt (Lichtgeschwindigkeit über ~17.000 km Unterseekabel).
+* * * bei Hops 3, 11–16: Viele Router antworten nicht auf ICMP-Pakete (Firewall/Konfiguration) – das bedeutet nicht, dass der Weg abbricht, sondern nur dass diese Router unsichtbar bleiben.
+Hop 24 mit !H: Das !H bedeutet Host Unreachable – der Zielserver selbst blockt die Traceroute-Pakete (ICMP wird gefiltert). Das Ziel ist trotzdem erreichbar (z.B. per Browser), aber antwortet nicht auf Traceroute.
+c)
+Der Traceroute zur IP-Adresse 195.220.128.193 zeigt einen Weg, der hauptsächlich durch Westeuropa verläuft. Nach den ersten lokalen Hops über das eigene Netz passieren die Pakete mehrere Router in Amsterdam, Niederlande (Hops 7–10, erkennbar an den Hostnamen ams2.nl und ams1.nl im M247-Netz), bevor sie über einen Internetknoten in Paris, Frankreich (Hops 11–12, nine-ix.net) ins RENATER-Netz weitergeleitet werden.
+Ab Hop 13 verläuft die Route vollständig innerhalb Frankreichs über Router des RENATER-Netzes (renater.fr). RENATER ist das französische nationale Forschungs- und Bildungsnetz (Réseau National de télécommunications pour la Technologie, l'Enseignement et la Recherche) und betreibt die Netzinfrastruktur für Universitäten und Forschungseinrichtungen in Frankreich. Die Ziel-IP gehört also zu dieser Organisation.
+Ab Hop 18 erscheinen nur noch * * *, was bedeutet, dass der Zielhost ICMP-Pakete blockiert und nicht antwortet – der Traceroute läuft bis zum Maximum von 30 Hops durch, ohne weitere Antwort zu erhalten.
+Die Latenzen bleiben durchgehend unter 45 ms, was die geografisch kurze Distanz widerspiegelt – im Vergleich zur ANU-Route (>300 ms) ein deutlicher Unterschied, da hier kein Ozean überquert werden muss.
+Aufgabe 3
+Der TCP-Scan (-sS) ist wesentlich schneller als der UDP-Scan (-sU), da TCP verbindungsorientiert ist und jeder Port sofort mit SYN-ACK oder RST antwortet. Nmap erhält also unmittelbar eine eindeutige Rückmeldung pro Port.
+Bei UDP hingegen antworten offene Ports standardmäßig gar nicht – Nmap muss daher auf jeden Port mehrfach warten, um Paketverlust von tatsächlich offenen Ports zu unterscheiden. Zusätzlich limitieren viele Systeme die Rate ihrer ICMP-„Port Unreachable"-Antworten, was Nmap weiter verlangsamt.
+Um den UDP-Scan zu beschleunigen, kann man das Timing-Template erhöhen (-T4), die maximale Anzahl an Wiederholungen reduzieren (--max-retries 1) oder den Scan auf die häufigsten Ports beschränken (--top-ports 100).
