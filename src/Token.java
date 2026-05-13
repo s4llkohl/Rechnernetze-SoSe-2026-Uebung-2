@@ -11,6 +11,18 @@ import java.util.Queue;
 
 public class Token {
 
+    //==========Durch KI vorgeschlagene Änderung
+    private boolean reverse = false;
+
+    public boolean isReverse() { return reverse; }
+    public void setReverse(boolean reverse) { this.reverse = reverse; }
+
+    // Hilfsmethode, um den Ring umzudrehen
+    public void flip() {
+        this.reverse = !this.reverse;
+    }
+    //==========
+
     private static final int max_buffer_size = 4096;
 
     public record Endpoint(String ip, int port) {}

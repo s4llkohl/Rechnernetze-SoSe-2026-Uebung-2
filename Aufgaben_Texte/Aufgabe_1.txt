@@ -1,0 +1,35 @@
+Hinweis vom Arbeitsblatt (Finden sie das Passwort!)
+
+
+
+Erster Hinweis (One HTTP error is different.)
+gesuchter String:
+dzh20szq
+
+Displayfilter:
+http
+
+So waren zwar noch einige Einträge übrig, doch in der "Info" Kurzvorschau (also in der Zeile, in diesem Fall 251, ganz rechts) hatte mich das "reset/user/login" direkt neugierig
+gemacht und so war der String über (unten links) "JavaScript Object Notation application/json" / "Object" / "Member: password" / "String value: dzh20szq" zu finden, ohne weitere
+Filter nutzen zu müssen.
+
+
+
+Zweiter Hinweis (Hiddeninping)
+gesuchter String:
+ra6rgv7h
+
+Displayfilter:
+http.response.code > 200
+
+
+
+Finale
+gesuchter String:
+nd7hark3
+
+Displayfilter:
+keiner
+
+Gefunden da 'Hiddeninping', also alle Einträge nach Protokoll sortiert (so dass TCP, und damit der Großteil, zuletzt kommt) in "Info" nach etwas mit "Ping" gesucht, es gibt einen
+Ping request und einen Ping reply Eintrag. Dann diese unter die Lupe genommen und in Bytes 42-49 (data) war der gesuchte Zeichensatz.

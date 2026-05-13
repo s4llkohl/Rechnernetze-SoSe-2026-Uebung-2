@@ -1,0 +1,17 @@
+a)
+Traceroute sendet ein Paket/Pakete zur angegebenen Adresse und fordert alle Verbindungsstellen auf der Route dorthin auf eine Rückmeldung zu schicken, anhand derer die Reaktionszeit gemessen
+wird, welche dann zusammen mit der Adresse der jeweiligen Verbindungsstelle ausgegeben wird.
+
+b)
+Traceroute zählt eine Liste an genutzten Stationen auf, die Route verläuft zunächst zwischen einer Reihe an Hops in Deutschland, wobei sie die letzten beiden Hops in Deutschland auf Knoten
+der Zayo Group liegen (einem Netzwerkanbieter) und hier ein Sprung der Reaktionszeit von 13ms auf 148ms zu beobachten ist.
+Die Route verläuft dann über die Niederlande und Großbritannien in die USA, im letzten Knoten in den USA ist ein weiterer Sprung der Reaktionszeit von 147ms auf 285ms zu beobachten, nach diesem
+Punkt ist die Route in Australien angekommen, verläuft dort ohne weitere Sprunghaften Anstieg der Reaktionszeit über Knoten in Australien und endet in: tuckwell.anu.edu.au [130.56.67.33]
+Zusammengefasst verläuft die Route über zwei interkontinentale Hops (Europa -> USA / USA -> Australien), die einen Ansprung der Reaktionszeit bewirken und auf den Kontinenten jeweils
+mehrere Hops in dortigen Netzen, die aber im Gro eine ähnliche Reaktionsgeschwindigkeit haben.
+
+c)
+tracert 195.220.128.193
+Führt zunächst über den häuslichen Router und lokale Stellen des Internetproviders nach Frankfurt am Main, dann nach Großbritannien und schließlich nach Frankreich, in den Großraum Paris.
+Ab Frankfurt läuft die Route über NORDUnet und dann das GEANT-Netzwerk, welche ein Netzwerk an skandinavischen, respektive europäischen, Bildungseinrichtungen darstellen.
+Die IP gehört zu einer Universität in Paris, genauer zur Université Paris Cité.
