@@ -15,6 +15,8 @@ public class Token {
 
     public record Endpoint(String ip, int port) {}
 
+    public record ReceivedToken(Token token, Endpoint sender) {}
+
     public Token append(String ip, int port) {
         ring.offer(new Endpoint(ip, port));
         return this;
@@ -73,6 +75,17 @@ public class Token {
         String rc_json = new String(packet.getData(),0,packet.getLength(), StandardCharsets.UTF_8);
         System.out.printf("Received %s from %s:%d\n", rc_json, packet.getAddress().getHostAddress(), packet.getPort());
         return fromJSON(rc_json);
+    }
+
+    public static ReceivedToken receiveWithSender(DatagramSocket s) throws IOException {
+        byte[] buf = new byte[max_buffer_size];
+        DatagramPacket packet = new DatagramPacket(buf, buf.length);
+        s.receive(packet);
+        String rc_json = new String(packet.getData(),0,packet.getLength(), StandardCharsets.UTF_8);
+        String senderIp = packet.getAddress().getHostAddress();
+        int senderPort = packet.getPort();
+        System.out.printf("Received %s from %s:%d\n", rc_json, senderIp, senderPort);
+        return new ReceivedToken(fromJSON(rc_json), new Endpoint(senderIp, senderPort));
     }
 
     @JsonProperty
