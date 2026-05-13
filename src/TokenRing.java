@@ -5,6 +5,23 @@ import java.util.LinkedList;
 
 public class TokenRing {
 
+    private static boolean sendWithRetries(DatagramSocket socket, Token token, Token.Endpoint next, int maxRetries, long retryDelayMs)
+            throws InterruptedException {
+        for (int attempt = 1; attempt <= maxRetries; attempt++) {
+            try {
+                token.send(socket, next);
+                return true;
+            } catch (IOException e) {
+                System.out.printf("Failed to send to %s:%d - Try: %d/%d\n",
+                        next.ip(), next.port(), attempt, maxRetries);
+                if (attempt < maxRetries) {
+                    Thread.sleep(retryDelayMs);
+                }
+            }
+        }
+        return false;
+    }
+
     private static void loop(DatagramSocket socket, String ip, int port, boolean first){
         LinkedList<Token.Endpoint> candidates = new LinkedList<>();
         if (first) {
@@ -33,22 +50,8 @@ public class TokenRing {
                 rc.append(next);
                 rc.incrementSequence();
                 Thread.sleep(1000);
-                rc.send(socket, next);
+                boolean sent = sendWithRetries(socket, rc, next, 3, 500);
 
-                boolean sent = false;
-                int maxRetries = 3;
-                for (int i = 0; i < maxRetries && !sent; i++) {
-                    try {
-                        rc.send(socket, next);
-                        sent = true;
-                    } catch (IOException e) {
-                        System.out.printf("Failed to sent to %s:%d – Take: %d/%d\n",
-                                next.ip(), next.port(), i + 1, maxRetries);
-                        Thread.sleep(500);
-                    }
-                }
-                //Hier wird eine maximale Anzahl von Versuchen definiert, um einen bestimmten Knoten zu erreichen.
-                //Wenn es scheitert, soll der entsprechende Endpoint aus der Queue im nächsten Schritt gelöscht werde
                 if (!sent) {
                     System.out.printf("Token %s:%d removed!\n", next.ip(), next.port());
                     rc.removeEndpoint(next);
