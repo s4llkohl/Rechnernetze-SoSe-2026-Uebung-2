@@ -1,0 +1,4 @@
+Grundidee wie in Übung: Bei Initialisierung des Tokenringes automatisch einen zweiten, gegenläufigen Ring erstellen, der die Teilnehmer in umgekehrer Reihenfolge verbindet.
+Unterbricht oder verliert ein Teilnehmer die Verbindung, existiert so noch ein Ring zwischen den übrigen Teilnehmern.
+Unterbrechen oder verlieren mehrere Teilnehmer die Verbindung, bleibt ein Ring bestehen solange kein 'Zwischenglied' verloren geht. Falls doch würden mehrere Ringe entstehen
+die zwar ihre jeweiligen Teilnehmer, aber nicht mehr alle verfügbaren Teilnehmer verbinden.

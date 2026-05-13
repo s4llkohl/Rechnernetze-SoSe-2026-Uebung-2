@@ -1,0 +1,28 @@
+nmap -sU scanme.nmap.org
+für UDP Ports benötigte 1026.82s und fand einen offene, einen offenen/gefilterten und 998 geschlossene UDP Ports.
+
+nmap -sS scanme.nmap.org
+für TCP Ports benötigte 1229.95s und fand vier offene und 996 geschlossene TCP Ports.
+
+Der Scan auf TCP Ports benötigte also ~20% mehr Zeit.
+
+Laut https://nmap.org/man/de/man-port-scanning-techniques.html sollte -sU wohl langsamer sein als -sS (da ersterer mit einer Reihe an Problemen behaftet ist und
+letzterer als schnell bezeichnet wird, nun war dies bei mir aus unbekannten Gründen anders herum.
+
+Ein schnellerer Weg nach allen TCP-Ports zu scannen ist bspw.: nmap -Pn scanme.nmap.org
+Dieses fand zwei offene, 251 geschlossene (Antwort war 'reset') und 747 gefilterte Ports die keine Antwort auf die Anfrage von nmap gaben.
+
+
+Eine deutlich schnellere Methode ist -F in das Kommando einzügen, also...
+-sU -F scanme.nmap.org   liefert einen offenen, einen offenen/gefilterten und 98 geschlossene UDP Ports in 105.89s
+-sS -F scanme.nmap.org   liefert zwei offenen und 98 geschlossenen TCP Ports in 3.87s
+... der 'fast-scan' (-F). Dieser prüft nur die obersten/gebräuchlichsten 100 Ports und ist daher deutlich schneller, da nicht auf die Antwort von potentiell sehr
+vielen weitere Ports die potentiell gar keine Antwort geben gewartet werden muss.
+Hier zeigt sich auch der zuvor angesprochene 'normale' Geschwindigkeitsunterschied zwischen -sU und -sS, da ersteres rund 27-mal länger braucht.
+
+
+TCP als Protokoll an sich bietet mehr Möglichkeiten (bspw. in Punkto Übertragungssicherheit, die bei UDP nicht gewährleistet ist, da TCP verlorenen Pakete erneut
+anfragen kann und UDP nicht), ist daher aber auch komplizierter und damit tendenziell langsamer, was die ~20% mehr Zeit zwischen -sU und -sS erklären würde.
+Allerdings sollte -sS aufgrund der Implementierung in nmap laut nmap selbst schneller sein und war dies mit dem fast-scan auch. Möglicherweise gibt es bei der
+Funktionsweise von nmap selbst, der Seite oder auch Drittgründen allgemein oder explizit während meines Tests weitere Faktoren, die bei einer Anfrage an mehr als
+x Ports, mit x ∈ ℕ | x > 100, -sS entgegen der Erwartung langsamer machten als -sU, ich habe jedoch keinen konkreten Anhaltspunkt warum dies so war.
