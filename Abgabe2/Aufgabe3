@@ -1,0 +1,14 @@
+TCP ist wesentlich schneller als UDP da TCP Verbindungsorientiert ist und udp verbindungslos
+
+TCP: Nmap done: 1 IP address (1 host up) scanned in 4.15 seconds
+UDP: hab aufgehört zu warten der Kollege antwortet nicht, 
+vermutlich antwortet der Offene UDP port einfach nicht
+
+Grund dafür ist dass UDP einfach anders funktioniert als TCP, die nmap wartet wahrscheinlich
+auf irgendeine Rückmeldung vom UDP der nie kommt und deswegen passiert auch nichts.
+
+Schneller wäre der Scan wenn man vermutlich nur bestimmte ports ansteuert, oder parallele Hostscans macht (sagt Chatty),
+ was im prinzip einfach nur beudeutet dass wir nicht nur einen Port ansteuern 
+ und dann warten sondern mehrere gleichzeitig.
+
+ 

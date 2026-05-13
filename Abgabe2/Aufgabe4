@@ -1,0 +1,20 @@
+Damit der Token Ring auch beim Ausfall eines Knotens weiterlaufen kann, braucht er eine
+Fehlererkennung und eine Möglichkeit, den defekten Knoten aus der Ring-Liste zu entfernen.
+
+Die Grundidee ist:
+
+1. Jeder Token enthält weiterhin die vollständige Ring-Reihenfolge der bekannten Endpunkte.
+2. Bevor ein Token an den nächsten Knoten gesendet wird, wird der Versand mehrfach versucht.
+3. Schlägt der Versand nach mehreren Versuchen fehl, wird der betroffene Endpunkt aus dem Token entfernt.
+4. Der Token wird dann an den nächsten noch erreichbaren Knoten weitergegeben.
+
+Im Code ist das so umgesetzt, dass der Ring in der Klasse Token als Queue von Endpunkten
+gespeichert wird. Die Methode removeEndpoint(...) löscht einen Endpunkt aus dieser Queue.
+In TokenRing wird der Versand an den Nachfolger über eine Hilfsmethode mit Retry-Logik
+abgewickelt. Erst wenn alle Versuche fehlschlagen, wird der Knoten wirklich aus dem Ring
+entfernt und der Rest des Rings bleibt erhalten.
+
+Das ist keine perfekte Ausfallsicherung wie in einem echten verteilten System, aber es ist
+eine brauchbare Vereinfachung für diese Übung. In einer robusteren Variante könnte man
+zusätzlich Heartbeats oder Timeouts zwischen Nachbarn einbauen, damit ein Ausfall auch dann
+erkannt wird, wenn UDP beim Senden keinen Fehler meldet.
