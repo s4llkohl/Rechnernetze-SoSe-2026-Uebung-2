@@ -1,0 +1,53 @@
+Aufgabe 1:
+Verwendete Display-Filter:
+
+Filter 1:
+frame contains "a"
+Filter 2:
+http.request.method == "POST"
+Gefundene Zeichenkette:
+dzh20szq
+Filter 3:
+http.response.code >= 400
+
+
+Aufgabe 2a:
+Traceroute sendet Pakete mit steigender TTL (Time To Live).
+Jeder Router reduziert die TTL um 1.
+Wenn die TTL 0 erreicht, sendet der Router eine Fehlermeldung zurück.
+Dadurch kann traceroute die einzelnen Stationen (Hops) zwischen Quelle und Ziel anzeigen.
+Aufgabe 2b:
+Bei einem traceroute nach Australien werden viele internationale Router durchlaufen.
+Die Antwortzeiten steigen deutlich an, da die Entfernung sehr groß ist.
+Teilweise antworten manche Router nicht oder blockieren traceroute.
+Aufgabe 2c:
+Der traceroute zu 195.220.128.193 zeigt mehrere Stationen zwischen dem eigenen Rechner und dem Zielsystem.
+Der erste Hop ist der lokale Router „kabelbox.local“ im Heimnetzwerk.
+Danach folgen Router des Internetproviders und des Netzwerks GEANT.
+Anhand der Hostnamen lassen sich geographische Regionen erkennen:
+- „fra-ix.geant.net“ deutet auf Frankfurt am Main in Deutschland hin.
+- „renater-gw.geant.net“ gehört zum französischen Forschungsnetz RENATER.
+- Mehrere Hostnamen enthalten „paris“, wodurch erkennbar ist, dass der Weg anschließend über Paris in Frankreich verläuft.
+Die Zieladresse 195.220.128.193 gehört zur Organisation „RENATER“ bzw. zur Université de Paris („u-paris.fr“).
+Ab Hop 13 antworten die Router nicht mehr auf traceroute-Anfragen.
+Dies bedeutet nicht zwingend, dass die Verbindung unterbrochen ist.
+Viele Router oder Firewalls blockieren ICMP- oder traceroute-Pakete aus Sicherheitsgründen.
+
+
+Aufgabe 3:
+Verwendete Befehle:
+nmap -sU scanme.nmap.org
+nmap -sS scanme.nmap.org
+Beobachtungen:
+Der UDP-Scan (-sU) ist deutlich langsamer als der TCP-Scan (-sS).
+Beim TCP-Scan kann Nmap anhand von SYN-, SYN/ACK- und RST-Paketen schnell erkennen, ob ein Port offen oder geschlossen ist.
+UDP ist verbindungslos und viele Systeme senden keine Antwort zurück.
+Dadurch muss Nmap auf Timeouts warten, wodurch der Scan deutlich länger dauert.
+Der Scan kann beschleunigt werden, indem weniger Ports gescannt oder Timing-Optionen wie -T4 verwendet werden.
+
+
+Aufgabe 4:
+Ich habe versucht, den Token Ring gegen Knotenausfälle abzusichern.
+Dafür wurde ein Retry-Mechanismus eingebaut. Wenn das Token nicht an den nächsten Knoten gesendet werden kann, wird das Senden mehrfach versucht.
+Nach mehreren fehlgeschlagenen Versuchen wird der betroffene Endpoint aus der Ringstruktur entfernt. Danach wird versucht, das Token an den nächsten verbleibenden Knoten im Ring weiterzuleiten.
+Dazu wurde in Token.java eine Methode removeEndpoint(...) verwendet, mit der ein ausgefallener Knoten aus der Queue entfernt werden kann.
