@@ -1,0 +1,23 @@
+Aufgabe 2 - Traceroute
+
+a) Funktionsweise
+Traceroute sendet Pakete mit steigender TTL (1, 2, 3, ...).
+Jeder Router dekrementiert die TTL und schickt bei TTL=0 eine ICMP "Time Exceeded"-Nachricht zurück.
+So wird jeder Hop auf dem Weg sichtbar. Drei Messwerte pro Hop zeigen die Latenz.
+"* * *" bedeutet, der Router antwortet nicht auf ICMP.
+
+b) Traceroute zur ANU (130.56.67.33) - 15 Hops
+Hops 1-8:   Lokales Netz + vsenet.de (Köln, Deutschland)
+Hop 9:      Level3 Frankfurt
+Hop 11:     AARNet London (Australisches Forschungsnetz)
+Hop 12:     AARNet Canberra, Australien -> Latenz springt von 20ms auf 360ms
+Hops 13-15: ANU-Netz in Canberra
+Hops 16+:   Firewall (!H = Host unreachable), Ziel blockiert weiteres Tracerouten
+
+c) Traceroute zu 195.220.128.193
+Hops 1-6:   Lokales Netz + vsenet.de (Köln)
+Hops 7-12:  Cogent Communications (Frankfurt -> Paris -> Marseille)
+Hop 13:     GÉANT (Europäisches Forschungsnetz), Marseille
+Hops 14-19: RENATER (Französisches Forschungsnetz): Marseille -> Lyon -> Paris
+Hop 20:     195.220.129.174 - Zielnetz erreicht
+Hops 21+:   Keine Antwort 

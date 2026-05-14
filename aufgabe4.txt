@@ -1,0 +1,15 @@
+Aufgabe 4 - Token Ring Fehlertoleranz
+
+Wenn ein Knoten ausfällt, gibt es zwei Probleme:
+
+1. Der Empfänger fällt aus: Das Senden schlägt fehl. Der Token muss dann an den
+   nächsten Knoten im Ring gesendet werden, anstatt verloren zu gehen.
+
+2. Der Token-Halter fällt aus: Der nächste Knoten wartet ewig. Ein Empfangs-Timeout
+   (socket.setSoTimeout) hilft, das zu erkennen.
+
+Umsetzung:
+- Retry-Schleife beim Senden. Bei Misserfolg Knoten aus Ring entfernen
+  und Token an den nächsten Knoten senden (nicht auf neuen Token warten).
+- socket.setSoTimeout(5000): Wirft SocketTimeoutException wenn kein Token ankommt.
+- Der Leader speichert den letzten Token und regeneriert ihn nach einem Timeout.

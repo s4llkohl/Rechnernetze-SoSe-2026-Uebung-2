@@ -5,66 +5,98 @@ import java.util.LinkedList;
 
 public class TokenRing {
 
-    private static void loop(DatagramSocket socket, String ip, int port, boolean first){
+    private static final int RECEIVE_TIMEOUT_MS = 5000;
+    private static final int RETRY_DELAY_MS = 500;
+    private static final int MAX_RETRIES = 3;
+
+    private static void loop(DatagramSocket socket, String ip, int port, boolean isLeader) {
+        final boolean wasLeader = isLeader;
         LinkedList<Token.Endpoint> candidates = new LinkedList<>();
-        if (first) {
+        if (isLeader) {
             candidates.add(new Token.Endpoint(ip, port));
         }
+
+        try {
+            socket.setSoTimeout(RECEIVE_TIMEOUT_MS);
+        } catch (SocketException e) {
+            System.out.println("Warning: could not set receive timeout: " + e.getMessage());
+        }
+
+        Token lastToken = null;
+
         while (true) {
             try {
                 Token rc = Token.receive(socket);
+                lastToken = rc;
+
                 System.out.printf("Token: seq=%d, #members=%d", rc.getSequence(), rc.length());
                 for (Token.Endpoint endpoint : rc.getRing()) {
                     System.out.printf(" (%s, %d)", endpoint.ip(), endpoint.port());
                 }
                 System.out.println();
+
                 if (rc.length() == 1) {
                     candidates.add(rc.poll());
-                    if (!first) {
+                    if (!isLeader) {
                         continue;
                     }
                 }
-                first = false;
+                isLeader = false;
                 for (Token.Endpoint candidate : candidates) {
                     rc.append(candidate);
                 }
                 candidates.clear();
+
                 Token.Endpoint next = rc.poll();
                 rc.append(next);
                 rc.incrementSequence();
                 Thread.sleep(1000);
-                rc.send(socket, next);
 
                 boolean sent = false;
-                int maxRetries = 3;
-                for (int i = 0; i < maxRetries && !sent; i++) {
+                while (!sent) {
+                    int retries = 0;
+                    while (retries < MAX_RETRIES && !sent) {
+                        try {
+                            rc.send(socket, next);
+                            sent = true;
+                        } catch (IOException e) {
+                            System.out.printf("Failed to send to %s:%d – Attempt %d/%d\n",
+                                    next.ip(), next.port(), retries + 1, MAX_RETRIES);
+                            retries++;
+                            Thread.sleep(RETRY_DELAY_MS);
+                        }
+                    }
+                    if (!sent) {
+                        System.out.printf("Node %s:%d removed from ring.\n", next.ip(), next.port());
+                        rc.removeEndpoint(next);
+                        if (rc.length() == 0) {
+                            System.out.println("Ring is empty, shutting down.");
+                            return;
+                        }
+                        next = rc.poll();
+                        rc.append(next);
+                    }
+                }
+
+            } catch (SocketTimeoutException e) {
+                System.out.println("Timeout: no token received, token may be lost.");
+                if (wasLeader && lastToken != null) {
+                    System.out.println("Regenerating token as original ring leader...");
                     try {
-                        rc.send(socket, next);
-                        sent = true;
-                    } catch (IOException e) {
-                        System.out.printf("Failed to sent to %s:%d – Take: %d/%d\n",
-                                next.ip(), next.port(), i + 1, maxRetries);
-                        Thread.sleep(500);
+                        Token regenerated = Token.fromJSON(lastToken.toJSON());
+                        regenerated.incrementSequence();
+                        Token.Endpoint first = regenerated.first();
+                        if (first != null) {
+                            regenerated.send(socket, first);
+                            System.out.println("Token regenerated.");
+                        }
+                    } catch (Exception ex) {
+                        System.out.println("Could not regenerate token: " + ex.getMessage());
                     }
                 }
-                //Hier wird eine maximale Anzahl von Versuchen definiert, um einen bestimmten Knoten zu erreichen.
-                //Wenn es scheitert, soll der entsprechende Endpoint aus der Queue im nächsten Schritt gelöscht werde
-                if (!sent) {
-                    System.out.printf("Token %s:%d removed!\n", next.ip(), next.port());
-                    rc.removeEndpoint(next);
-
-                    if (rc.length() == 0) {
-                        System.out.println("No more Tokens found.");
-                        break;
-                    }
-                    continue;
-                }
-
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 System.out.println("Error receiving packet: " + e.getMessage());
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 System.out.println("Error: " + e.getMessage());
             }
         }
