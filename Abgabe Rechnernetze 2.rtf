@@ -1,0 +1,103 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2869
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 Menlo-Regular;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+{\*\expandedcolortbl;;\csgray\c0;}
+{\info
+{\title Rechnernetze \'dcbung 2}
+{\author Marie Reichert (1481733)}}\paperw11900\paperh16840\margl1440\margr1440\vieww28600\viewh18000\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs28 \cf0 Marie Reichert (1481733)\
+Rechnernetze \'dcbung 2\
+\
+Aufgabe 1\
+\
+1.1 Finde das Passwort.\
+Passwort: dzh20szq\
+Verwendeter Filter: http\
+\
+1.2 One HTTP error is different.\
+Zeichenfolge:  ra6rgv7h\
+Verwendeter Filter: http, sortiert nach Information \'97> L\'e4nge des Errors ist unterschiedlich \
+\
+1.3 Hiddeninping\
+Zeichenfolge: nd7hark3\
+Verwendeter Filter: icmp\
+\
+1.4 final Code\
+Q29uZ3JhdHNfVGhpc19Jc190aGVfQm9udXMh\
+Congrats_This_Is_the_Bonus!\
+\
+Aufgabe 2\
+\
+2a) Textauszug aus Terminal (mit Kommentaren)\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+
+\f1\fs22 \cf2 \CocoaLigature0 traceroute to 8.8.8.8 (8.8.8.8), 64 hops max, 40 byte packets\
+ 1  unifi (192.168.188.1)  16.981 ms  4.106 ms  3.424 ms // mein Router\
+ 2  lo0.0.vs-r1-vsenet.6838.ip.vsenet.de (212.88.155.35)  8.751 ms  6.494 ms  12.073 ms\
+ 3  186-151-088-212.ip-addr.vsenet.de (212.88.151.186)  6.037 ms  5.697 ms  5.445 ms\
+ 4  154-145-088-212.ip-addr.vsenet.de (212.88.145.154)  5.290 ms  6.491 ms  4.893 ms\
+ 5  et-2-0-5.0.vs-core-r1.6838.ip.vsenet.de (217.24.235.181)  6.602 ms  87.152 ms  7.129 ms\
+ 6  et-2-1-2.0.vs-core-r1.6898.ip-addr.vsenet.de (217.24.235.153)  6.401 ms  6.503 ms  6.830 ms\
+ 7  * * *\
+ 8  * * * // haben keine Antwort gegeben\
+ 9  dns.google (8.8.8.8)  15.726 ms  10.615 ms  10.079 ms // Router von Google\
+\
+// Jeder Hop ist ein Router\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs28 \cf0 \CocoaLigature1 Erkl\'e4rung: Der Befehl traceroute ermittelt die verschiedenen Kontenpunkte (Router), die zwischen meinem eigenen Router und der Ziel IP-Adresse liegen. Dazu wird mit der TTL die maximale Anzahl dieser Router ermittelt. \
+Diese Router senden nacheinander ihre IP-Adressen oder nichts (im Beispiel durch *** gekennzeichnet) zur\'fcck. Dadurch kann nachvollzogen werden, welcher Router zwischen den Adressen liegt.\
+\
+2b) Australian National University\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+
+\f1\fs22 \cf2 \CocoaLigature0  1  unifi (192.168.188.1)  7.435 ms  4.932 ms  3.754 ms\
+ 2  lo0.0.vs-r1-vsenet.6838.ip.vsenet.de (212.88.155.35)  5.200 ms  8.657 ms  5.944 ms\
+ 3  186-151-088-212.ip-addr.vsenet.de (212.88.151.186)  5.480 ms  5.261 ms  5.851 ms\
+ 4  154-145-088-212.ip-addr.vsenet.de (212.88.145.154)  6.393 ms  5.982 ms  6.281 ms\
+ 5  et-2-0-5.0.vs-core-r1.6838.ip.vsenet.de (217.24.235.181)  5.790 ms  6.135 ms  5.345 ms\
+ 6  et-2-1-2.0.vs-core-r1.6898.ip-addr.vsenet.de (217.24.235.153)  5.939 ms  6.156 ms  5.649 ms\
+ 7  et-3-0-23.edge9.frankfurt1.level3.net (62.67.66.45)  10.801 ms  9.728 ms  9.420 ms\
+ 8  * * *\
+ 9  aarnet-pty.ear4.london1.level3.net (217.163.113.74)  23.410 ms  22.582 ms  22.817 ms\
+10  et-0-3-0.pe1.actn.act.aarnet.net.au (113.197.15.11)  342.721 ms  307.598 ms  305.953 ms\
+11  138.44.172.29 (138.44.172.29)  308.479 ms  304.255 ms  277.237 ms\
+12  vlan-2100-palo.anu.edu.au (150.203.201.33)  337.279 ms  318.059 ms  306.894 ms\
+13  policyforum.net (130.56.67.33)  305.881 ms  305.927 ms  280.575 ms\
+14  * -common-self-ip.anu.edu.au (130.56.66.249)  2706.271 ms !H *\
+15  -common-self-ip.anu.edu.au (130.56.66.249)  3085.045 ms !H * *\
+16  * * -common-self-ip.anu.edu.au (130.56.66.249)  872.319 ms !H\
+17  * * *\
+18  -common-self-ip.anu.edu.au (130.56.66.249)  1061.134 ms !H *  3467.798 ms !H\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+
+\f0\fs28 \cf0 \CocoaLigature1 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 Der Weg bricht ab, da der Host nicht erreichbar ist. In Zeile 14 bis 18 wurde mehrmals versucht die IP-Adresse zu erreichen. \
+\
+2c) 195.220.128.193\
+\
+Die Route geht vom Saarland nach Frankfurt, nach Amerika bis sie letztlich in Frankreich ankommt.  Die letzte IP-Adresse die angezeigt wird befindet sich in Paris. Es handelt sich um RENATER , das Forschungs- und Bildungsnetzwerk in Paris. \
+\
+Aufgabe 3\
+UDP-Scans sind im allgemeinen langsamer als TPC-Scan, da gewartet werden muss, ob die Port eine R\'fcckmeldung an dem Computer schicken. Eine M\'f6glichkeit das zu ver\'e4ndern, ist eine Parallelit\'e4t der Ports zu nutzen. Dadurch k\'f6nnen mehrere Ports angefragt werden. Quelle: {\field{\*\fldinst{HYPERLINK "https://nmap.org/man/de/man-port-scanning-techniques.html"}}{\fldrslt https://nmap.org/man/de/man-port-scanning-techniques.html}}\
+Problem: Fehlermeldung bei meinem Versuch\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+
+\f1\fs22 \cf2 \CocoaLigature0 nmap -sU scanme.nmap.org\
+You requested a scan type which requires root privileges.\
+QUITTING!\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs28 \cf0 \CocoaLigature1 Ich habe nicht herausgefunden, wie ich die Fehlermeldung verhindern kann. Nach meiner Recherche kann -sT statt -sS verwendet werden. Aber nach der Erkl\'e4rung im Handbuch scheint es f\'fcr mich keine alternative zu sein.\
+\
+Aufgabe 4\
+Um ein Aussetzen eines Knotens zu vermeiden, soll ein neuer Knoten entstehen. Dieser neue Knoten wird nur aufgerufen, wenn ein anderer nicht erreicht wird. Daf\'fcr wird er in die Queue eingef\'fcgt. Der n\'e4chste Knoten soll normal angegeben werden.\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 \
+}
