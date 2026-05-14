@@ -1,0 +1,19 @@
+Rechnernetze Uebung 2
+Weydert Jo
+1687610
+Aufgabe 1
+1.(http.request or http.request_in) dzh20szq
+2.(http.request or http.request_in) ra6rgv7h, habe beim Scrollen diesen Code vor dem Passwort gesehen und deshalb den Hint nicht genutzt sonst noch http.response.code > 200
+3. icmp, nd7hark3
+
+Aufgabe 2
+a)Traceroute scheint einfach jeden möglichen Knoten anzupingen, TTL erlaubt es ihm dabei nicht im vorhinein Wissen zu müssen welche Knotenpunkte es gibt. 30 Knoten ist die maximale Anzahl von Knoten die Tracert in der Grundausführung nachvervolgt.
+b) Das Packet verläuft über die Niederlande und die Verinigten Staaten um in Australien anzukommen
+c) Scheint ein Teil des Französischen Wissenschaftsnetzwerk Renater zu sein. Die Anfrage verläuft über Marseille, Lyon und Paris.
+
+Aufgabe 3
+Der TCP-Port Scan ist wesentlich schneller als der UDP-Port Scan. Das liegt daran dass TCP einen ACK-Schritt hat, das heisst NMap kann sehr schnell erkennen ob ein Port offen oder geschlossen ist anhand der Antwort. UDP hat diese Funktion nicht, deshalb muss NMap auf einen Time-out warten.
+Um dass das zu verschnellern wäre mein erster Ansatz kürzere Zeitfenster zum Antworten zu erlauben, was jedoch bei zu geringer Wartezeit zu Fehlinformationen führen könnte. 
+
+Aufgabe 4
+Eine Idee wäre es jedem Knoten zwei Nachbarn zu geben sodass das Ausfallen eines einzelnen Knoten nicht den gesamten Knoten zu Sturz bringen kann. 
