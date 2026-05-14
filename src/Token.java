@@ -33,7 +33,9 @@ public class Token {
         return ring.poll();
     }
 
-    public boolean removeEndpoint(Endpoint endpoint) {return ring.remove(endpoint); } //Nutzung einer LinkedList-Methode
+   public boolean removeEndpoint(Endpoint endpoint) {
+    return ring.remove(endpoint);
+}
 
     public int length () {
         return ring.size();
