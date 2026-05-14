@@ -1,0 +1,27 @@
+Erster Schritt:
+
+	Display-Filter:
+		http.request.method == "POST"
+	
+	Zeichenfolge für die URL:
+		dzh20szq
+
+Zweiter Schritt:
+
+	Display-Filter:
+		http
+	
+	Zeichenfolge für die URL:
+		ra6rgv7h
+
+
+Dritter Schritt:
+
+	Display-Filter:
+		icmp
+	
+	Zeichenfolge für die URL:	
+		nd7hark3
+
+
+Ich hab die verschiedenen Zeichencodes ursprünglich nicht mit Display-Filtern gefunden, daher sind die hier angegebenen Filter vielleicht nicht ideal um die Zeichenketten zu finden.
