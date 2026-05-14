@@ -1,0 +1,6 @@
+a) Traceroute gibt den Ablauf der Hops zurück. Jede Zeile entspricht einem Hop. Es werden noch die Antwortzeiten angegeben und die IP-Adresse der Routern bzw. des Ziel-Servers angegeben.
+
+b) Es entstehen mehr Hops, die Latenz steigt stark an und an einigen Routern gibt es keine Rückmeldung, was mit einem * gekennzeichnet wird.
+
+c) Von Deutschland hoppt man nach Frankreich -> Marseille -> Lyon -> Paris -> Odéon 
+Die IP-Adresse gehört der Organisation Renater

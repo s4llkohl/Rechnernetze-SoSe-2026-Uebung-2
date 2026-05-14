@@ -1,0 +1,1 @@
+Der TCP-Scan ist wesentlich schneller als der UDP-Scan, weil TCP klare Antworten liefert, wodurch offenen und geschlossene Ports schnell erkannt werden können. UDP ist Verbindungslos und viele Dienste antworten nicht, weshalb man Timeouts abwarten muss. Man kann den UDP-Scan beschleunigen durch die Timing-Optionen oder Einschränkung auf bestimmte Ports.

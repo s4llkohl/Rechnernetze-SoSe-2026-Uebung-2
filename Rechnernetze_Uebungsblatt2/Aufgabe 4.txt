@@ -1,0 +1,1 @@
+Damit der Token Ring bei einem Ausfall eines Knotens funktioniert, kann man bei der Hin-Richtung auch die Rückrichtung hinzufügen, damit man immer noch einen geschlossenen Ring behält. 
