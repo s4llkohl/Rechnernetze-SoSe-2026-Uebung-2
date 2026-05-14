@@ -1,0 +1,3 @@
+Damit der Token Ring auch beim Ausfall eines Knotens weiter funktioniert, könnte jeder Knoten regelmäßig prüfen, ob sein Nachbar noch erreichbar ist. 
+Antwortet ein Knoten nach mehreren Versuchen nicht mehr, wird dieser automatisch aus dem Ring entfernt und die Verbindung zum nächsten erreichbaren Knoten hergestellt. 
+Zusätzlich könnte ein Timeout verwendet werden, damit ein verlorenes Token nach einer bestimmten Zeit neu erzeugt wird. 

@@ -1,0 +1,64 @@
+a)
+
+Ausgabe:
+
+
+$ tracert 8.8.8.8
+
+Routenverfolgung zu dns.google [8.8.8.8]
+über maximal 30 Hops:
+
+  1     1 ms     1 ms     2 ms  kabelbox.local [192.168.0.1]
+  2     *        *        *     Zeitüberschreitung der Anforderung.
+  3    16 ms    13 ms    12 ms  92.79.214.24
+  4    15 ms    13 ms    25 ms  145.254.2.179
+  5    13 ms    13 ms    15 ms  74.125.32.52
+  6    16 ms    14 ms    14 ms  108.170.236.175
+  7    13 ms    29 ms    15 ms  142.251.241.75
+  8    13 ms    13 ms    13 ms  dns.google [8.8.8.8]
+
+Ablaufverfolgung beendet.
+
+
+
+Traceroute funktionert so, dass Packete mit schrittweise höherer TTL gesendet werden, bis das Zeil erreicht wird. 
+In dieser Ausgabe ist zu sehen, dass zuerst der Router angepingt wird. Im zweiten Schritt kam keine Antwort zurück. Nach weiterer Erhöhung wird Google bei ein TTL von 8 erreicht.
+
+
+b)
+
+
+Ausgabe:
+
+$ tracert www.anu.edu.au
+
+Routenverfolgung zu terra-web.anu.edu.au [130.56.67.33]
+über maximal 30 Hops:
+
+  1     1 ms     2 ms     1 ms  kabelbox.local [192.168.0.1]
+  2     *        *        *     Zeitüberschreitung der Anforderung.
+  3    23 ms    15 ms    18 ms  92.79.214.24
+  4    13 ms    13 ms    14 ms  145.254.2.207
+  5    14 ms    17 ms    17 ms  ae17.edge8.frf1.sp.lumen.tech [4.68.72.213]
+  6    26 ms    27 ms    26 ms  ae2.3217.ear4.lon1.neo.colt.net [171.75.8.43]
+  7    30 ms    29 ms    29 ms  AARNET-PTY.ear4.London1.Level3.net [217.163.113.74]
+  8   283 ms   282 ms   287 ms  et-0-3-0.pe1.actn.act.aarnet.net.au [113.197.15.11]
+  9   316 ms   297 ms   341 ms  138.44.172.29
+ 10   281 ms   282 ms   283 ms  vlan-2100-palo.anu.edu.au [150.203.201.33]
+ 11   285 ms   282 ms   282 ms  anu.edu.au [130.56.67.33]
+
+Ablaufverfolgung beendet.
+
+
+
+In der Ausgabe ist zu erkennen, dass die Anzahl der Hops auf Grund der hohen Distanz ansteigt, genauso wie die Antwortzeiten.
+Außerdem lässt sich rauslesen, dass die Verbindung z.B. über London läuft.
+
+
+c)
+
+Der Weg verläuft über folgende Städte:
+Frankfurt -> Wiesbaden -> Köln -> Cambridge -> Lyon -> Paris -> Rhône-Alpes -> Paris
+
+Die Organisationen sind unter anderem GÉANT und Renater, bei denen es sich um Forschungsnetzwerke in Frankreich handelt.
+

@@ -1,0 +1,7 @@
+Der TCP-Scan mit nmap -sS ist normalerweise deutlich schneller als der UDP-Scan mit nmap -sU.
+Das liegt daran, dass TCP verbindungsorientiert ist. Bei TCP wird ein Paket an einen Port geschickt und wenn dieser offen ist, antwortet der Server direkt und wenn dieser geschlossen ist, antwortet der Server direkt mir RST.
+
+UDP ist hingegen verbindungslos. Wenn ein Port geschlossen ist, kommt eine Fehlermeldung zurück. Wenn ein Port aber offen ist, kommt überhaupt nicht zuück, wodurch Nmap oftmals lange warten muss.
+
+
+Der Scan kann beschleunigt werden, indem man den Scan auf eine bestimmte Gruppe oder einen einzelnen Port konzentriert, oder ein schnelleres Timing-Profil nutzt.
