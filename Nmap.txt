@@ -1,0 +1,10 @@
+Warum ist einer der beiden Scans wesentlich schneller als der Andere?
+
+Der Befehl nmap -sS scanme.nmap.org nutzt das TCP-Protokoll. Bei TCP gibt es einen festen Handshake – jeder Port antwortet immer sofort. Nmap bekommt also sofort eine Antwort und kann direkt zum nächsten Port weitergehen. Dadurch dauerte der Scan nur 5 Sekunden.
+
+Der Befehl nmap -sU scanme.nmap.org nutzt das UDP-Protokoll. Bei UDP gibt es keinen Handshake – ein geschlossener Port schickt zwar ein "Port Unreachable" zurück, aber ein offener Port antwortet gar nicht. Nmap muss deshalb bei jedem Port auf einen Timeout warten und das Paket mehrfach neu senden, bevor es zum nächsten Port weitergeht. Bei fast 1000 Ports summiert sich das zu einer sehr langen Wartezeit von ca. 18 Minuten.
+
+
+Gibt es Möglichkeiten, den Scan schneller durchzuführen?
+
+Eine Möglichkeit den UDP-Scan zu beschleunigen ist, die maximale Anzahl der Wiederholungsversuche zu reduzieren. Normalerweise sendet Nmap ein Paket mehrfach neu wenn keine Antwort kommt. Mit dem Parameter --max-retries 1 sendet Nmap das Paket nur noch einmal erneut – kommt dann immer noch keine Antwort, wird der Port als 'open|filtered' markiert und Nmap geht sofort zum nächsten Port weiter. Das spart bei fast 1000 Ports enorm viel Zeit.
