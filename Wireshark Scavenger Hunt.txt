@@ -1,0 +1,10 @@
+Aufgabe 1 - Wireshark Schnitzeljagd
+
+Challenge 1: dzh20szq
+Filter benutzt: Paket Bytes -> Zeichenkette -> "password"
+
+Challenge 2: ra6rgv7h  
+Filter benutzt: http -> In der Info geschaut was anders ist -> Flag gefunden
+
+Challenge 3: Q29uZ3JhdHNfVGhpc19Jc190aGVfQm9udXMh = Congrats_This_Is_the_Bonus!
+Filter benutzt: icmp
