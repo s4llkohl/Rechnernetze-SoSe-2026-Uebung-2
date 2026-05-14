@@ -1,0 +1,10 @@
+Aufgabe 1 - Wireshark Filter
+
+Filter 1: urlencoded-form
+- Paket 213: POST /login.php -> Passwort: dzh20szq
+
+Filter 2: http.response.code >= 400
+- Paket 493: HTTP 401 mit Status-Text -> Code: ra6rgv7h
+
+Filter 3: icmp
+- Paket 342: ICMP Payload (Hex: 6e64376861726b33) -> Code: nd7hark3
