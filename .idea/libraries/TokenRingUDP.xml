@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="TokenRingUDP">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/TokenRingUDP.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
